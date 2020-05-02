@@ -17,6 +17,9 @@ app.use('/',movie)
 var cinema = require('./route/cinema')
 app.use('/',cinema)
 
+// 引入视频
+var video = require('./route/video')
+app.use('/',video)
 // app.post('/getUserInfo', function (req, res) {
 //   console.log(req.body)
 //   console.log(`select * from user where user_id='${req.body.user_id}'`)
