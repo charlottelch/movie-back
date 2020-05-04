@@ -20,6 +20,10 @@ app.use('/',cinema)
 // 引入视频
 var video = require('./route/video')
 app.use('/',video)
+
+// 引入个人中心
+var personalCenter = require('./route/personalCenter')
+app.use('/',personalCenter)
 // app.post('/getUserInfo', function (req, res) {
 //   console.log(req.body)
 //   console.log(`select * from user where user_id='${req.body.user_id}'`)

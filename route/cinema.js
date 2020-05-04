@@ -147,6 +147,22 @@ router.post('/getHall', function (req, res) {
   })
 })
 
+// 座位
+router.post('/getSeatData', function (req, res) {
+  for (let i = 0; i < req.body.seatList.length; i++) {
+    console.log(req.body.seatList[i].c, req.body.seatList[i].r)
+    mysql.query(`UPDATE seat SET seatType=2 WHERE sceneId=${req.body.sceneId} AND seatX=${req.body.seatList[i].r} AND seatY = ${req.body.seatList[i].c}`, (err, data) => {
+      if (err) {
+
+      } else {
+        console.log(data)
+      }
+    })
+    // res.send({ code: 200, msg: '数据获取成功' })
+  }
+  res.send({ code: 200, msg: '数据获取成功' })
+})
+
 // router.post('/getHall', function (req, res) {
 //   console.log(req)
 //   mysql.query(`select seatRow,seatCol from cinema_hall WHERE hallId=${req.body.hallId}`, (err, data) => {
