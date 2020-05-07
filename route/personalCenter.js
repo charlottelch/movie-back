@@ -61,16 +61,16 @@ router.post('/insertSignData', function (req, res) {
   })
   // console.log(req.body)
 })
-// 兑换优惠券
+// 影豆兑换优惠券
 router.post('/toExchangeCoupon', function (req, res) {
-  mysql.query(`insert into user_coupon(userId,couponValue) value(${req.body.userId},"${req.body.couponValue}")
-  `, (err, data) => {
+  // console.log(req.body)
+  mysql.query(`insert into user_coupon(userId,\`value\`,startAt,endAt,unitDesc,\`condition\`,\`name\`,valueDesc) value(${req.body.userId},"${req.body.value}",${req.body.startAt},${req.body.endAt},"${req.body.unitDesc}","${req.body.condition}","${req.body.name}","${req.body.valueDesc}")`, (err, data) => {
     if (err) {
 
     } else {
+      // console.log(data)
       mysql.query(`UPDATE user SET integral=integral-${req.body.cost} WHERE userId=${req.body.userId}`, (err, data) => {
         if (err) {
-
         } else {
         }
       })
@@ -81,14 +81,27 @@ router.post('/toExchangeCoupon', function (req, res) {
   // console.log(req.body)
 })
 
-// 我的优惠券
+// 个人中心我的优惠券
 router.post('/getMyCoupon', function (req, res) {
   mysql.query(`select * from user_coupon WHERE userId=${req.body.userId}`, (err, data) => {
     if (err) {
 
     } else {
       res.send({ data: data, code: 200, msg: '数据获取成功' })
-      // console.log(data)
+      console.log(data)
+    }
+  })
+  // console.log(req.body)
+})
+
+// 购票使用优惠券后更新优惠券数据
+router.post('/updateCouponData', function (req, res) {
+  mysql.query(`DELETE FROM user_coupon WHERE couponId = ${req.body.couponId}`, (err, data) => {
+    if (err) {
+
+    } else {
+      res.send({ data: data, code: 200, msg: '数据获取成功' })
+      console.log(data)
     }
   })
   // console.log(req.body)
@@ -129,5 +142,67 @@ router.post('/getLikeMovieData', function (req, res) {
     }
   })
 })
+
+// 电影订单表信息
+router.post('/getOrderData',function(req,res){
+  mysql.query(`SELECT * from \`order\` WHERE orderId=${req.body.orderId}`,(err,data)=>{
+    if(err){
+
+    }else{
+      res.send({data:data,code:200,msg:'获取订单信息成功'})
+    }
+  })
+})
+
+// 电影订单详细信息
+router.post('/getOrderDetailData',function(req,res){
+  mysql.query(`SELECT DISTINCT s.*,m.movieName,c.cinemaName,c.cinemaAdress,ch.cinemaHallName FROM scene s  RIGHT JOIN movie m on s.movieId=m.movieid RIGHT JOIN cinema c on c.cinemaId=s.cinemaId RIGHT JOIN seat on seat.sceneId=s.sceneId RIGHT JOIN cinema_hall ch on seat.hallId=ch.hallId WHERE s.sceneId=${req.body.sceneId} AND seat.orderId = ${req.body.orderId}
+  `,(err,data)=>{
+    if(err){
+
+    }else{
+      mysql.query(`SELECT s.* from seat s WHERE s.orderId = ${req.body.orderId}`,(err,Sdata)=>{
+        if(err){
+    
+        }else{
+          for(let i=0;i<data.length;i++){
+            data[i].seat = []
+            for(let j=0;j<Sdata.length;j++){
+              if(data[i].sceneId == Sdata[j].sceneId){
+                data[i].seat.push(Sdata[j])
+              }
+            }
+          }
+          res.send({data:data,code:200,msg:'获取订单信息成功'})
+        }
+      })
+      // res.send({data:data,code:200,msg:'获取订单信息成功'})
+    }
+  })
+})
+
+// 获取该用户的所有电影票列表
+router.post('/getUserOrderData',function(req,res){
+  mysql.query(`SELECT o.orderId,s.sceneDate,s.startTime,m.movieName,c.cinemaName FROM \`order\` o RIGHT JOIN scene s on s.sceneId=o.sceneId RIGHT JOIN movie m on m.movieId=s.movieId RIGHT JOIN cinema c on c.cinemaId=s.cinemaId where userId=${req.body.userId}`,(err,data)=>{
+    if(err){
+
+    }else{
+      res.send({data:data,code:200,msg:'获取电影票列表信息成功'})
+    }
+  })
+})
+
+// 拿到登录用户的动态信息
+// router.post('/getLoginUserCommunity', function (req, res) {
+//   mysql.query(`select v.* ,u.userName,u.headPortrait from video v LEFT JOIN user u on v.userId=u.userId WHERE u.userId=${req.body.userId}`, (err, data) => {
+//     if (err) {
+
+//     } else {
+//       res.send({ data: data, code: 200, msg: '数据获取成功' })
+//       // console.log(data)
+//     }
+//   })
+//   // console.log(req.body)
+// })
 
 module.exports = router

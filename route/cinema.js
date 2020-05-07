@@ -146,16 +146,53 @@ router.post('/getHall', function (req, res) {
     }
   })
 })
+// 获取用户的优惠券信息
+// router.post('/getCouponData', function (req, res) {
+//   mysql.query(`select s.*,h.seatRow,h.seatCol from seat s LEFT JOIN cinema_hall h on s.hallId=h.hallId WHERE s.hallId=${req.body.hallId} AND s.sceneId=${req.body.sceneId}`, (err, data) => {
+//     if (err) {
 
-// 座位
+//     } else {
+//       // console.log(data)
+//       res.send({ data: data, code: 200, msg: '数据获取成功' })
+//       // console.log(data)
+//     }
+//   })
+// })
+
+// 查询座位状态
+router.post('/selectSeatType',async function (req, res) {
+  var seatTypeList = []
+  var dataArr = []
+  for (let i = 0; i < req.body.seatList.length; i++) {
+    // console.log(req.body.seatList[i].c, req.body.seatList[i].r)
+    function seatCheck(){
+      return new Promise((resolve,reject)=>{
+        mysql.query(`SELECT seatType from seat WHERE sceneId=${req.body.sceneId} AND seatX=${req.body.seatList[i].r} AND seatY = ${req.body.seatList[i].c}`, (err, data) => {
+          if (err) {
+    
+          } else {
+            dataArr[i] = data
+            resolve(dataArr)
+          }
+        })
+      })
+    }
+    seatTypeList=await seatCheck()
+    // console.log(2,arr)
+  }
+  // console.log(2,seatTypeList)
+  res.send({ data: seatTypeList, code: 200, msg: '数据获取成功' })
+})
+
+// 更新座位信息
 router.post('/getSeatData', function (req, res) {
   for (let i = 0; i < req.body.seatList.length; i++) {
-    console.log(req.body.seatList[i].c, req.body.seatList[i].r)
-    mysql.query(`UPDATE seat SET seatType=2 WHERE sceneId=${req.body.sceneId} AND seatX=${req.body.seatList[i].r} AND seatY = ${req.body.seatList[i].c}`, (err, data) => {
+    // console.log(req.body.seatList[i].c, req.body.seatList[i].r)
+    mysql.query(`UPDATE seat SET seatType=2,orderId=${req.body.orderId} WHERE sceneId=${req.body.sceneId} AND seatX=${req.body.seatList[i].r} AND seatY = ${req.body.seatList[i].c}`, (err, data) => {
       if (err) {
 
       } else {
-        console.log(data)
+        // console.log(data)
       }
     })
     // res.send({ code: 200, msg: '数据获取成功' })
@@ -163,18 +200,19 @@ router.post('/getSeatData', function (req, res) {
   res.send({ code: 200, msg: '数据获取成功' })
 })
 
-// router.post('/getHall', function (req, res) {
-//   console.log(req)
-//   mysql.query(`select seatRow,seatCol from cinema_hall WHERE hallId=${req.body.hallId}`, (err, data) => {
-//     if (err) {
+// 生成新的订单
+router.post('/createOrder', function (req, res) {
+  // console.log(req.body)
+  // console.log(`insert into \`order\`(orderNum,userId,sceneId,ticketCode,cost,orderTime,couponValue) value('${req.body.orderNum}',${req.body.userId},${req.body.sceneId},'${req.body.ticketCode}',${req.body.cost},'${req.body.orderTime}','${req.body.couponValue}')`)
+  mysql.query(`insert into \`order\`(orderNum,userId,sceneId,ticketCode,cost,orderTime,couponValue) value('${req.body.orderNum}',${req.body.userId},${req.body.sceneId},'${req.body.ticketCode}',${req.body.cost},'${req.body.orderTime}','${req.body.couponValue}')`, (err, data) => {
+    if (err) {
 
-//     } else {
-//       // console.log(data)
-//       res.send({ data: data, code: 200, msg: '更改成功' })
-//       // console.log(data)
-//     }
-//   })
-// })
-
+    } else {
+      // console.log(data+'lllo')
+      res.send({ data: data, code: 200, msg: '数据获取成功' })
+      // console.log(data)
+    }
+  })
+})
 
 module.exports = router
