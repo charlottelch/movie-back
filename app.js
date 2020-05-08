@@ -24,6 +24,10 @@ app.use('/',video)
 // 引入个人中心
 var personalCenter = require('./route/personalCenter')
 app.use('/',personalCenter)
+
+// 搜索
+var search = require('./route/search')
+app.use('/',search)
 // app.post('/getUserInfo', function (req, res) {
 //   console.log(req.body)
 //   console.log(`select * from user where user_id='${req.body.user_id}'`)

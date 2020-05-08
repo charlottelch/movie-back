@@ -144,11 +144,11 @@ router.post('/follow', function (req, res) {
   
 })
 
-// 作者的个人中心
+// 作者的个人中心（关注和粉丝）
 router.post('/getUserInfo', function (req, res) {
   // console.log(req.body)
   var followFansList = []
-  mysql.query(`SELECT COUNT(*) as follow FROM user_follow WHERE userId=${req.body.userId}`, (err, data) => {
+  mysql.query(`SELECT u.* FROM user_follow uf RIGHT JOIN \`user\` u ON uf.concernedId=u.userId WHERE uf.userId=${req.body.userId}`, (err, data) => {
     if (err) {
 
     } else {
@@ -157,18 +157,18 @@ router.post('/getUserInfo', function (req, res) {
       // res.send({ data: followFansList, code: 200, msg: '用户已经关注' })
     }
   })
-  mysql.query(`SELECT COUNT(*) as fans FROM user_follow WHERE concernedId=${req.body.userId}`, (err, data) => {
+  mysql.query(`SELECT u.* FROM user_follow uf RIGHT JOIN \`user\` u ON uf.userId=u.userId WHERE uf.concernedId=${req.body.userId}`, (err, data) => {
     if (err) {
 
     } else {
       followFansList.push(data)
       // console.log(followFansList)
-      res.send({ data: followFansList, code: 200, msg: '用户已经关注' })
+      res.send({ data: followFansList, code: 200, msg: '关注和粉丝' })
     }
   })
 })
 
-// 作者的动态
+// 作者的动态及收藏的动态
 router.post('/getVideoData', function (req, res) {
   // console.log(req.body)
   var videoList = []
