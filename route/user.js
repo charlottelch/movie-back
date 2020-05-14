@@ -51,6 +51,20 @@ router.post('/register', function (req, res) {
     }
   })
 })
+// 上传头像
+router.post('/uploadHeadPortrait', function (req, res) {
+  console.log(req)
+  mysql.query(`UPDATE user SET headPortrait='${req.body.headPortrait}' WHERE userId=${req.body.userId}`,(err,data) => {
+    if(err){
+
+    }else{
+      // console.log(data)
+      res.send({code:200,msg:'更改成功'})
+      // console.log(data)
+    }
+
+  })
+})
 // 改变昵称
 router.post('/preserveNickname', function (req, res) {
   console.log(req)

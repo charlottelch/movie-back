@@ -101,8 +101,7 @@ router.post('/getMovieCinema', function (req, res) {
               // res.send({ data: Cdata })
             }
           })
-          mysql.query(`
-          select distinct s.*,t.hallId,h.cinemaHallName from scene s LEFT JOIN seat t on s.sceneId = t.sceneId  LEFT JOIN cinema_hall h on t.hallId = h.hallId WHERE movieId=${req.body.movieId} ORDER BY startTime`, (err, Sdata) => {
+          mysql.query(`select distinct s.*,t.hallId,h.cinemaHallName from scene s LEFT JOIN seat t on s.sceneId = t.sceneId  LEFT JOIN cinema_hall h on t.hallId = h.hallId WHERE movieId=${req.body.movieId} ORDER BY startTime`, (err, Sdata) => {
             if (err) {
 
             } else {

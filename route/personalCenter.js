@@ -109,11 +109,12 @@ router.post('/updateCouponData', function (req, res) {
 
 // 拿取想看电影信息
 router.post('/getLikeMovieData', function (req, res) {
+  console.log(req.body)
   mysql.query(`select m.* from movie m LEFT JOIN want_movie w on w.movieId=m.movieId WHERE w.userId=${req.body.userId}`, (err, mData) => {
     if (err) {
 
     } else {
-      mysql.query('SELECT a.*,b.performerName,b.role,b.birthday,b.image FROM movie_performer a LEFT JOIN performer b on b.performerId = a.performerId', (err, mpData) => {
+      mysql.query('SELECT a.*,b.performerName,b.birthday,b.image FROM movie_performer a LEFT JOIN performer b on b.performerId = a.performerId', (err, mpData) => {
         if (err) {
 
         } else {

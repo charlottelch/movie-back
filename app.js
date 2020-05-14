@@ -1,33 +1,36 @@
 // 创建expresss服务器
 var express = require('express');
 // 解析前端请为看得懂的样子
-var bodyparser=require('body-parser')
+var bodyparser = require('body-parser')
 var app = express();
 app.use(bodyparser.json())
+//暴漏静态资源文件 暴漏之后通过域名访问该文件下的资源
+app.use(express.static('uploads'))
+
 app.get('/', function (req, res) {
-   res.send('Hello World');
+  res.send('Hello World');
 })
 // 引入用户 
 var user = require('./route/user')
-app.use('/',user)
+app.use('/', user)
 // 引入电影
 var movie = require('./route/movie')
-app.use('/',movie)
+app.use('/', movie)
 // 引入电影院
 var cinema = require('./route/cinema')
-app.use('/',cinema)
+app.use('/', cinema)
 
 // 引入视频
 var video = require('./route/video')
-app.use('/',video)
+app.use('/', video)
 
 // 引入个人中心
 var personalCenter = require('./route/personalCenter')
-app.use('/',personalCenter)
+app.use('/', personalCenter)
 
 // 搜索
 var search = require('./route/search')
-app.use('/',search)
+app.use('/', search)
 // app.post('/getUserInfo', function (req, res) {
 //   console.log(req.body)
 //   console.log(`select * from user where user_id='${req.body.user_id}'`)
@@ -45,7 +48,7 @@ app.use('/',search)
 //   // });
 // })
 
-app.listen(3000,function(){
+app.listen(3000, function () {
   console.log("连接成功")
 })
- 
+

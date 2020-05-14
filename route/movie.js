@@ -13,7 +13,7 @@ router.post('/getMovie', function (req, res) {
     if (err) {
 
     } else {
-      mysql.query('SELECT a.*,b.performerName,b.role,b.birthday,b.image FROM movie_performer a LEFT JOIN performer b on b.performerId = a.performerId', (err, mpData) => {
+      mysql.query('SELECT a.*,b.performerName,b.image FROM movie_performer a LEFT JOIN performer b on b.performerId = a.performerId', (err, mpData) => {
         if (err) {
 
         } else {
@@ -106,7 +106,7 @@ router.post('/seenMovie', function (req, res) {
 
     } else {
       if (data.length != 0) {
-        res.send({ data:data, code: 200, msg: '用户已经评论' })
+        res.send({ data: data, code: 200, msg: '用户已经评论' })
       }
     }
   })
@@ -139,8 +139,66 @@ router.post('/stillList', function (req, res) {
 
     } else {
       if (data.length != 0) {
-        res.send({ data:data, code: 200, msg: '剧照' })
+        res.send({ data: data, code: 200, msg: '剧照' })
       }
+    }
+  })
+  // console.log(req.body)
+})
+// 演员数据
+router.post('/getPerformerData', function (req, res) {
+  mysql.query(`SELECT * FROM  performer  WHERE performerId=${req.body.performerId}`, (err, data) => {
+    if (err) {
+
+    } else {
+      if (data.length != 0) {
+        res.send({ data: data, code: 200, msg: '演员' })
+      }
+    }
+  })
+  // console.log(req.body)
+})
+// 电影影评数据
+router.post('/getMovieCommentData', function (req, res) {
+  mysql.query(`select * from film_comment f LEFT JOIN user u ON f.userId=u.userId WHERE movieId = ${req.body.movieId}`, (err, Cdata) => {
+    if (err) {
+
+    } else {
+      mysql.query(`select * from film_comment_reply`, (err, Rdata) => {
+        if (err) {
+
+        } else {
+          mysql.query(`select * from user`, (err, Udata) => {
+            if (err) {
+
+            } else {
+              for (let i = 0; i < Rdata.length; i++) {
+                Rdata[i].userSend = []
+                Rdata[i].userReplied = []
+                for (let j = 0; j < Udata.length; j++) {
+                  if (Rdata[i].userFilmSendId == Udata[j].userId) {
+                    Rdata[i].userSend.push(Udata[j])
+                  }
+                  if (Rdata[i].userFilmRepliedId == Udata[j].userId) {
+                    Rdata[i].userReplied.push(Udata[j])
+                  }
+                }
+              }
+              for (let i = 0; i < Cdata.length; i++) {
+                Cdata[i].reply = []
+                for (let j = 0; j < Rdata.length; j++) {
+                  if (Cdata[i].id == Rdata[j].filmCommentId) {
+                    // console.log(Cdata[i].commentId, Rdata[j].commentId)
+                    Cdata[i].reply.push(Rdata[j])
+                  }
+                }
+              }
+              console.log(Cdata)
+              res.send({ data: Cdata, code: 200, msg: '获取数据成功' })
+            }
+          })
+        }
+      })
     }
   })
   // console.log(req.body)
