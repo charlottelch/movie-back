@@ -14,7 +14,7 @@ router.post('/login', function (req, res) {
         // console.log(data)
         if (data[0].password === req.body.password) {
           res.send({ data: data, code: 200, msg: '登录成功' })
-          console.log('登录成功')
+          // console.log('登录成功')
 
         } else {
           res.send({ code: 201, msg: '密码错误' })
@@ -32,11 +32,11 @@ router.post('/login', function (req, res) {
 
 router.post('/register', function (req, res) {
   mysql.query(`select * from user where phone='${req.body.phone}'`, (err, data) => {
-    console.log(req.body)
+    // console.log(req.body)
     if (err) {
 
     } else {
-      console.log(data)
+      // console.log(data)
       if (data.length != 0) {
         res.send({ code: 203, msg: '用户账号已经存在' })
       } else {
@@ -53,7 +53,7 @@ router.post('/register', function (req, res) {
 })
 // 上传头像
 router.post('/uploadHeadPortrait', function (req, res) {
-  console.log(req)
+  // console.log(req)
   mysql.query(`UPDATE user SET headPortrait='${req.body.headPortrait}' WHERE userId=${req.body.userId}`,(err,data) => {
     if(err){
 
@@ -67,7 +67,7 @@ router.post('/uploadHeadPortrait', function (req, res) {
 })
 // 改变昵称
 router.post('/preserveNickname', function (req, res) {
-  console.log(req)
+  // console.log(req)
   mysql.query(`UPDATE user SET userName='${req.body.userName}' WHERE userId=${req.body.userId}`,(err,data) => {
     if(err){
 
@@ -81,8 +81,8 @@ router.post('/preserveNickname', function (req, res) {
 })
 // 改变性别
 router.post('/genderBoy', function (req, res) {
-  console.log(req)
-  mysql.query(`UPDATE user SET gender='${req.body.gender}' WHERE userId=${req.body.userId}`,(err,data) => {
+  // console.log(req)
+  mysql.query(`UPDATE user SET gender='男' WHERE userId=${req.body.userId}`,(err,data) => {
     if(err){
 
     }else{
@@ -93,8 +93,8 @@ router.post('/genderBoy', function (req, res) {
   })
 })
 router.post('/genderGirl', function (req, res) {
-  console.log(req)
-  mysql.query(`UPDATE user SET gender='${req.body.gender}' WHERE userId=${req.body.userId}`,(err,data) => {
+  // console.log(req)
+  mysql.query(`UPDATE user SET gender='女' WHERE userId=${req.body.userId}`,(err,data) => {
     if(err){
 
     }else{
@@ -106,7 +106,7 @@ router.post('/genderGirl', function (req, res) {
 })
 // 更改生日
 router.post('/confirmDate', function (req, res) {
-  console.log(req)
+  // console.log(req)
   mysql.query(`UPDATE user SET birthday='${req.body.birthday}' WHERE userId=${req.body.userId}`,(err,data) => {
     if(err){
 

@@ -4,7 +4,7 @@ var router = express.Router()
 var mysql = require('../db/mysql')
 // 电影院信息
 router.post('/getCinemaData', function (req, res) {
-  mysql.query(`select * from cinema`, (err, Cdata) => {
+  mysql.query(`select * from cinema WHERE selectAdress LIKE '%${req.body.locationCity}%'`, (err, Cdata) => {
     if (err) {
 
     } else {
@@ -26,6 +26,21 @@ router.post('/getCinemaData', function (req, res) {
       })
     }
   })
+  // console.log(req.body)
+})
+router.post('/updataCinemaDistance', function (req, res) {
+  for (let i = 0; i < req.body.cinemaList.length; i++) {
+    console.log(req.body.cinemaList[i])
+    mysql.query(`UPDATE cinema SET cinemaDistance=${req.body.cinemaList[i].cinemaDistance} WHERE cinemaId=${req.body.cinemaList[i].cinemaId} `, (err, data) => {
+      if (err) {
+
+      } else {
+
+      }
+    })
+  }
+  res.send({code:200})
+
   // console.log(req.body)
 })
 
@@ -80,7 +95,7 @@ router.post('/getMovieCinema', function (req, res) {
     if (err) {
 
     } else {
-      mysql.query(`SELECT distinct s.sceneDate,c.* FROM scene s LEFT JOIN cinema c on s.cinemaId=c.cinemaId WHERE movieId=${req.body.movieId}`, (err, Cdata) => {
+      mysql.query(`SELECT distinct s.sceneDate,c.* FROM scene s LEFT JOIN cinema c on s.cinemaId=c.cinemaId WHERE movieId=${req.body.movieId} AND c.selectAdress LIKE '%${req.body.locationCity}%'`, (err, Cdata) => {
         if (err) {
 
         } else {
@@ -97,7 +112,7 @@ router.post('/getMovieCinema', function (req, res) {
                   }
                 }
               }
-              console.log(Cdata)
+              // console.log(Cdata)
               // res.send({ data: Cdata })
             }
           })
@@ -159,16 +174,16 @@ router.post('/getHall', function (req, res) {
 // })
 
 // 查询座位状态
-router.post('/selectSeatType',async function (req, res) {
+router.post('/selectSeatType', async function (req, res) {
   var seatTypeList = []
   var dataArr = []
   for (let i = 0; i < req.body.seatList.length; i++) {
     // console.log(req.body.seatList[i].c, req.body.seatList[i].r)
-    function seatCheck(){
-      return new Promise((resolve,reject)=>{
+    function seatCheck () {
+      return new Promise((resolve, reject) => {
         mysql.query(`SELECT seatType from seat WHERE sceneId=${req.body.sceneId} AND seatX=${req.body.seatList[i].r} AND seatY = ${req.body.seatList[i].c}`, (err, data) => {
           if (err) {
-    
+
           } else {
             dataArr[i] = data
             resolve(dataArr)
@@ -176,7 +191,7 @@ router.post('/selectSeatType',async function (req, res) {
         })
       })
     }
-    seatTypeList=await seatCheck()
+    seatTypeList = await seatCheck()
     // console.log(2,arr)
   }
   // console.log(2,seatTypeList)

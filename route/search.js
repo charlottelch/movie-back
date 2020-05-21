@@ -5,7 +5,7 @@ var mysql = require('../db/mysql')
 
 // 模糊查询电影院
 router.post('/selectCinema', function (req, res) {
-  mysql.query(`select * from (select c.*,GROUP_CONCAT(l.labelName) as labels from cinema_label l RIGHT JOIN cinema c on c.cinemaId = l.cinemaId GROUP BY c.cinemaId) hh  WHERE labels like '%${req.body.cinemaServerSelected}%' AND labels like '%${req.body.hallTypeSelected}%' AND cinemaName like '%${req.body.brandSelectText}%' AND selectAdress like '%${req.body.zoneSelected}%' AND selectAdress like '%${req.body.tradeAreaSelected}%' ORDER BY ${req.body.sortOrderText}`, (err, Cdata) => {
+  mysql.query(`select * from (select c.*,GROUP_CONCAT(l.labelName) as labels from cinema_label l RIGHT JOIN cinema c on c.cinemaId = l.cinemaId GROUP BY c.cinemaId) hh  WHERE labels like '%${req.body.cinemaServerSelected}%' AND labels like '%${req.body.hallTypeSelected}%' AND cinemaName like '%${req.body.brandSelectText}%' AND selectAdress like '%${req.body.zoneSelected}%' AND selectAdress like '%${req.body.tradeAreaSelected}%' AND selectAdress LIKE '%${req.body.locationCity}%' ORDER BY ${req.body.sortOrderText}`, (err, Cdata) => {
     if (err) {
 
     } else {
@@ -38,7 +38,7 @@ router.post('/selectMovieCinema', function (req, res) {
     if (err) {
 
     } else {
-      mysql.query(`SELECT distinct s.sceneDate,c.*,cl.labels FROM scene s LEFT JOIN cinema c on s.cinemaId=c.cinemaId LEFT JOIN (select *,GROUP_CONCAT(l.labelName) as labels from cinema_label l GROUP BY cinemaId) cl on cl.cinemaId = c.cinemaId WHERE movieId=${req.body.movieId} AND labels like '%${req.body.cinemaServerSelected}%' AND labels like '%${req.body.hallTypeSelected}%' AND cinemaName like '%${req.body.brandSelectText}%' AND selectAdress like '%${req.body.zoneSelected}%' AND selectAdress like '%${req.body.tradeAreaSelected}%' ORDER BY ${req.body.sortOrderText}`, (err, Cdata) => {
+      mysql.query(`SELECT distinct s.sceneDate,c.*,cl.labels FROM scene s LEFT JOIN cinema c on s.cinemaId=c.cinemaId LEFT JOIN (select *,GROUP_CONCAT(l.labelName) as labels from cinema_label l GROUP BY cinemaId) cl on cl.cinemaId = c.cinemaId WHERE movieId=${req.body.movieId} AND labels like '%${req.body.cinemaServerSelected}%' AND labels like '%${req.body.hallTypeSelected}%' AND cinemaName like '%${req.body.brandSelectText}%' AND selectAdress like '%${req.body.zoneSelected}%' AND selectAdress like '%${req.body.tradeAreaSelected}%' AND selectAdress LIKE '%${req.body.locationCity}%' ORDER BY ${req.body.sortOrderText}`, (err, Cdata) => {
         if (err) {
 
         } else {
@@ -92,7 +92,30 @@ router.post('/selectMovieCinema', function (req, res) {
   })
   // console.log(req.body)
 })
+// 搜索记录列表
+router.post('/getSearchHistory', function (req, res) {
+  mysql.query(`select * from movie_search_history order by searchHistoryId DESC`, (err, data) => {
+    if (err) {
 
+    } else {
+      res.send({ data: data, code: 200, msg: '数据获取成功' })
+      // console.log(data)
+    }
+  })
+  // console.log(req.body)
+})
+// 添加记录列表
+router.post('/addSearchHistory', function (req, res) {
+  mysql.query(`INSERT INTO movie_search_history(searchHistoryContent) VALUE('${req.body.searchHistoryContent}')`, (err, data) => {
+    if (err) {
+
+    } else {
+      res.send({ data: data, code: 200, msg: '添加成功' })
+      // console.log(data)
+    }
+  })
+  // console.log(req.body)
+})
 // 搜索电影、影院、影人
 router.post('/getSearchAll', function (req, res) {
   // console.log(req.body)
@@ -155,7 +178,7 @@ router.post('/getSearchAll', function (req, res) {
             }
           }
           searchList.cinema.push(Cdata)
-          console.log(searchList)
+          // console.log(searchList)
           res.send({ data: searchList, code: 200, msg: '查询结果' })
         }
       })
@@ -164,7 +187,7 @@ router.post('/getSearchAll', function (req, res) {
 })
 // 搜索动态
 router.post('/getSearchVideo', function (req, res) {
-  mysql.query(`select v.* ,u.userName,u.headPortrait from video v LEFT JOIN user u on v.userId=u.userId WHERE videoDescribe LIKE '%${req.body.inputText}%' OR videoLabel LIKE '%${req.body.inputText}%'`, (err, data) => {
+  mysql.query(`select v.* ,u.userName,u.headPortrait from video v LEFT JOIN user u on v.userId=u.userId WHERE videoDescribe LIKE '%${req.body.inputText}%' OR videoLabel LIKE '%${req.body.inputText}%' OR userName LIKE '%${req.body.inputText}%'`, (err, data) => {
     if (err) {
 
     } else {

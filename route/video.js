@@ -20,8 +20,21 @@ const storage = multer.diskStorage({
 const uploadd = multer({ storage })
 // req前端传过来的值
 // 前端接口
+// 热门动态
 router.post('/getVideo', function (req, res) {
   mysql.query(`select v.* ,u.userName,u.headPortrait from video v LEFT JOIN user u on v.userId=u.userId ORDER BY likeNumber DESC`, (err, data) => {
+    if (err) {
+
+    } else {
+      res.send({ data: data, code: 200, msg: '数据获取成功' })
+      // console.log(data)
+    }
+  })
+  // console.log(req.body)
+})
+// 推荐动态
+router.post('/getRecommendVideo', function (req, res) {
+  mysql.query(`select v.* ,u.userName,u.headPortrait from video v LEFT JOIN user u on v.userId=u.userId ORDER BY videoId DESC`, (err, data) => {
     if (err) {
 
     } else {
@@ -199,6 +212,15 @@ router.post('/getVideoData', function (req, res) {
 
     } else {
       videoList.push(data)
+      // res.send({ data: videoList, code: 200, msg: '获取数据成功' })
+      // console.log(data)
+    }
+  })
+  mysql.query(`SELECT u.fabulousId,v.*,user.headPortrait,user.userName FROM user_fabulous u LEFT JOIN video v on u.videoId=v.videoId LEFT JOIN user on v.userId=user.userId WHERE u.userId=${req.body.userId}`, (err, data) => {
+    if (err) {
+
+    } else {
+      videoList.push(data)
       res.send({ data: videoList, code: 200, msg: '获取数据成功' })
       // console.log(data)
     }
@@ -207,7 +229,7 @@ router.post('/getVideoData', function (req, res) {
 
 // 上传视频
 router.post('/upload', uploadd.single('file'), function (req, res) {
-  console.log(req.file)
+  // console.log(req.file)
   let file = req.file
   file.url = `http://localhost:3000/${file.filename}`
   // console.log(file)
@@ -219,7 +241,7 @@ router.post('/upload', uploadd.single('file'), function (req, res) {
 })
 // 上传图片
 router.post('/uploadImage', uploadd.single('file'), function (req, res) {
-  console.log(req.file)
+  // console.log(req.file)
   let file = req.file
   file.url = `http://localhost:3000/${file.filename}`
   // console.log(file)
@@ -230,7 +252,7 @@ router.post('/uploadImage', uploadd.single('file'), function (req, res) {
 })
 // 发布动态
 router.post('/toUpload', function (req, res) {
-  console.log(req.body)
+  // console.log(req.body)
   mysql.query(`insert into video(video,userId,videoDescribe,videoCover,videoLabel) value('${req.body.video}',${req.body.userId},'${req.body.videoDescribe}','${req.body.videoCover}','${req.body.videoLabel}')`, (err, data) => {
     if (err) {
 
@@ -296,7 +318,7 @@ router.post("/sendComment", function (req, res) {
     if(err){
 
     }else{
-      console.log(data)
+      // console.log(data)
       res.send({ data: data, code: 200, msg: '发布成功' })
     }
   })
@@ -304,12 +326,12 @@ router.post("/sendComment", function (req, res) {
 
 // 回复评论
 router.post("/sendReplyComment", function (req, res) {
-  console.log(req.body)
+  // console.log(req.body)
   mysql.query(`insert into video_comment_reply(videoCommentId,userSendId,userRepliedId,replyContent,replyTime) VALUE (${req.body.videoCommentId},${req.body.userSendId},${req.body.userRepliedId},'${req.body.replyContent}','${req.body.replyTime}')`,(err,data)=>{
     if(err){
 
     }else{
-      console.log(data)
+      // console.log(data)
       res.send({ data: data, code: 200, msg: '发布成功' })
     }
   })
