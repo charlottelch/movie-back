@@ -153,8 +153,6 @@ router.post('/wantToLook', function (req, res) {
           }
         })
       } else {
-        // console.log("sdasdas")
-        // console.log(req.body)
         mysql.query(`delete from want_movie where movieId = ${req.body.movieId} AND userId =${req.body.userId}`, (err, data) => {
           if (err) {
             // console.log(err)
@@ -331,12 +329,10 @@ router.post('/getMovieCommentData', function (req, res) {
 // 
 // 回复电影评论
 router.post("/sendFilmReplyComment", function (req, res) {
-  // console.log(req.body)
   mysql.query(`insert into film_comment_reply(filmCommentId,userFilmSendId,userFilmRepliedId,filmReplyContent,filmReplyTime) VALUE (${req.body.filmCommentId},${req.body.userFilmSendId},${req.body.userFilmRepliedId},'${req.body.filmReplyContent}','${req.body.filmReplyTime}')`, (err, data) => {
     if (err) {
 
     } else {
-      // console.log(data)
       res.send({ data: data, code: 200, msg: '发布成功' })
     }
   })
