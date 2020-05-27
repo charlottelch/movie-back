@@ -93,7 +93,6 @@ router.post('/getMyCoupon', function (req, res) {
   })
   // console.log(req.body)
 })
-
 // 购票使用优惠券后更新优惠券数据
 router.post('/updateCouponData', function (req, res) {
   mysql.query(`DELETE FROM user_coupon WHERE couponId = ${req.body.couponId}`, (err, data) => {
