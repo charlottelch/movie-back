@@ -2,7 +2,7 @@ var express = require('express')
 var router = express.Router()
 // 导入数据库
 var mysql = require('../db/mysql')
-
+// 使用multer来处理数据
 var multer = require('multer')
 //上传的文件保存在 upload
 const storage = multer.diskStorage({
@@ -12,6 +12,7 @@ const storage = multer.diskStorage({
   },
   //文件名字的确定 multer默认帮我们取一个没有扩展名的文件名，因此需要我们自己定义
   filename (req, file, cb) {
+    // 时间戳加字段名
     cb(null, Date.now() + file.originalname)
   }
 })
